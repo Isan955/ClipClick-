@@ -1,0 +1,181 @@
+<Window x:Class="ClipClick.Views.DynamicIslandWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="ClipClick Dynamic Island"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        SizeToContent="Manual"
+        Width="380" Height="48">
+    
+    <!-- Outer Container with Drop Shadow effect -->
+    <Grid Margin="6">
+        <!-- Main Floating Pill Border -->
+        <Border x:Name="PillBorder" Background="#0A0A0A"
+                BorderBrush="{StaticResource AccentBrush}" BorderThickness="1.2"
+                CornerRadius="20" Cursor="SizeAll"
+                MouseLeftButtonDown="Pill_MouseLeftButtonDown"
+                MouseEnter="Pill_MouseEnter"
+                MouseLeave="Pill_MouseLeave">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="14" ShadowDepth="2" Direction="270" Color="#000000" Opacity="0.8" />
+            </Border.Effect>
+
+            <Grid Margin="12,0,12,0">
+                <!-- COMPACT MODE VIEW -->
+                <Grid x:Name="CompactGrid" Height="36" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Neon Playing Equalizer Indicator -->
+                    <Border Grid.Column="0" Width="26" Height="26" CornerRadius="13" Background="#161616" Margin="0,0,10,0">
+                        <Path Stretch="Uniform" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path.Style>
+                                <Style TargetType="{x:Type Path}">
+                                    <Setter Property="Data" Value="{StaticResource IconMusic}" />
+                                    <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="False">
+                                            <Setter Property="Fill" Value="{StaticResource TextSecondaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Border>
+
+                    <!-- Title & Artist -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}" Foreground="{StaticResource TextPrimaryBrush}"
+                                   FontSize="12" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Artist}" Foreground="{StaticResource TextSecondaryBrush}"
+                                   FontSize="10.5" TextTrimming="CharacterEllipsis" Margin="0,1,0,0" />
+                    </StackPanel>
+
+                    <!-- Compact Controls (Prev, Play/Pause, Next) -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                        <!-- Prev -->
+                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource IconButton}" Width="26" Height="26">
+                            <Path Data="{StaticResource IconPrevious}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" Width="10" Height="10" />
+                        </Button>
+
+                        <!-- Play / Pause -->
+                        <Button Command="{Binding TogglePlayPauseCommand}" Style="{StaticResource IconButton}" Width="28" Height="28">
+                            <Path Stretch="Uniform" Width="11" Height="11">
+                                <Path.Style>
+                                    <Style TargetType="{x:Type Path}">
+                                        <Setter Property="Data" Value="{StaticResource IconPlay}" />
+                                        <Setter Property="Fill" Value="{StaticResource AccentBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconPause}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Button>
+
+                        <!-- Next -->
+                        <Button Command="{Binding NextCommand}" Style="{StaticResource IconButton}" Width="26" Height="26">
+                            <Path Data="{StaticResource IconNext}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" Width="10" Height="10" />
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Expand Toggle Chevron -->
+                    <Button Grid.Column="3" Command="{Binding ToggleExpandCommand}" Style="{StaticResource IconButton}" Width="24" Height="24" ToolTip="Expand / Collapse">
+                        <Path Stretch="Uniform" Width="9" Height="9">
+                            <Path.Style>
+                                <Style TargetType="{x:Type Path}">
+                                    <Setter Property="Data" Value="{StaticResource IconChevronDown}" />
+                                    <Setter Property="Fill" Value="{StaticResource TextSecondaryBrush}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsExpanded}" Value="True">
+                                            <Setter Property="Data" Value="{StaticResource IconChevronUp}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Button>
+                </Grid>
+
+                <!-- EXPANDED MODE VIEW -->
+                <Grid x:Name="ExpandedGrid" Margin="0,10,0,10" VerticalAlignment="Center" Visibility="Collapsed">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Row 1: Source & Collapse Button -->
+                    <Grid Grid.Row="0" Margin="0,0,0,6">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Width="6" Height="6" Fill="{StaticResource AccentBrush}" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding Source}" Foreground="{StaticResource AccentBrush}" FontSize="11" FontWeight="Bold" />
+                        </StackPanel>
+
+                        <Button HorizontalAlignment="Right" Command="{Binding ToggleExpandCommand}" Style="{StaticResource IconButton}" Width="22" Height="22">
+                            <Path Data="{StaticResource IconChevronUp}" Fill="{StaticResource TextSecondaryBrush}" Stretch="Uniform" Width="9" Height="9" />
+                        </Button>
+                    </Grid>
+
+                    <!-- Row 2: Title & Artist -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,8">
+                        <TextBlock Text="{Binding Title}" Foreground="{StaticResource TextPrimaryBrush}" FontSize="14" FontWeight="Bold" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{Binding Artist}" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <!-- Row 3: Progress Bar & Controls -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Progress Bar & Time -->
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}" Height="3" Background="#262626" Foreground="{StaticResource AccentBrush}" BorderThickness="0" Margin="0,0,0,4" />
+                            <TextBlock Text="{Binding TimeString}" Foreground="{StaticResource TextMutedBrush}" FontSize="10" />
+                        </StackPanel>
+
+                        <!-- Controls -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Command="{Binding PreviousCommand}" Style="{StaticResource IconButton}" Width="28" Height="28">
+                                <Path Data="{StaticResource IconPrevious}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" Width="10" Height="10" />
+                            </Button>
+                            <Button Command="{Binding TogglePlayPauseCommand}" Style="{StaticResource RoundPlayButton}" Width="32" Height="32" Margin="4,0">
+                                <Path Stretch="Uniform" Width="12" Height="12">
+                                    <Path.Style>
+                                        <Style TargetType="{x:Type Path}">
+                                            <Setter Property="Data" Value="{StaticResource IconPlay}" />
+                                            <Setter Property="Fill" Value="#0A0A0A" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                    <Setter Property="Data" Value="{StaticResource IconPause}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                            </Button>
+                            <Button Command="{Binding NextCommand}" Style="{StaticResource IconButton}" Width="28" Height="28">
+                                <Path Data="{StaticResource IconNext}" Fill="{StaticResource TextPrimaryBrush}" Stretch="Uniform" Width="10" Height="10" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <StartWithWindows>false</StartWithWindows>
+  <MinimizeToTrayOnClose>true</MinimizeToTrayOnClose>
+  <ShowDynamicIsland>true</ShowDynamicIsland>
+  <DynamicIslandTopmost>true</DynamicIslandTopmost>
+  <DynamicIslandAutoExpand>false</DynamicIslandAutoExpand>
+  <IslandLeft>438.40000000000003</IslandLeft>
+  <IslandTop>95.2</IslandTop>
+  <MaxClipboardEntries>500</MaxClipboardEntries>
+</AppSettings>
